@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.media.MediaView?>
+
+<AnchorPane fx:id="root" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.dep13.remote.server.controller.ActiveSceneController">
+   <children>
+      <MediaView fx:id="mdVideo" fitHeight="275.0" fitWidth="600.0" />
+      <HBox layoutX="10.0" layoutY="279.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="114.0" prefWidth="580.0" spacing="10.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="279.0">
+         <children>
+            <StackPane prefHeight="114.0" prefWidth="193.0">
+               <children>
+                  <ImageView fx:id="imgVideoOn" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/video_on.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imgVideoOff" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/video_off.png" />
+                     </image>
+                  </ImageView>
+               </children>
+               <HBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </HBox.margin>
+            </StackPane>
+            <StackPane prefHeight="114.0" prefWidth="150.0">
+               <children>
+                  <ImageView fx:id="imgMicOn" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/mic_on.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fx:id="imgMicOff" fitHeight="100.0" fitWidth="113.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/mic_off.png" />
+                     </image>
+                  </ImageView>
+               </children>
+               <HBox.margin>
+                  <Insets left="10.0" right="10.0" />
+               </HBox.margin>
+            </StackPane>
+            <ImageView fx:id="imgEndCall" fitHeight="90.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/reject.png" />
+               </image>
+               <HBox.margin>
+                  <Insets left="40.0" right="10.0" top="10.0" />
+               </HBox.margin>
+            </ImageView>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
