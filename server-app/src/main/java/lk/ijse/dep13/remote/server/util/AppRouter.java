@@ -13,7 +13,7 @@ public class AppRouter {
     public static AnchorPane getContainer( Routes route) throws IOException {
         AnchorPane container = null;
         if(route == Routes.MAIN){
-            container = FXMLLoader.load(AppRouter.class.getResource("/scene/MainScene.fxml"));
+            container = FXMLLoader.load(AppRouter.class.getResource("/scene/TextMessageServerScene.fxml"));
         }
 
         return container;
