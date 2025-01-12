@@ -15,7 +15,7 @@ public class ClientAppInitializer extends Application {
 
     @Override
     public void start ( Stage primaryStage ) throws IOException {
-        primaryStage.setScene(new Scene ( AppRouter.getContainer(AppRouter.Routes.MAIN)));
+        primaryStage.setScene(new Scene ( AppRouter.getContainer(AppRouter.Routes.APPROVAL)));
         primaryStage.setTitle("Desktop Client");
         primaryStage.setResizable(false);
         primaryStage.show();

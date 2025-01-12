@@ -6,21 +6,29 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.media.MediaView?>
 
 <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.dep13.remote.server.controller.ActiveSceneController">
    <children>
-      <MediaView fx:id="mdVideo" fitHeight="275.0" fitWidth="600.0" />
-      <HBox layoutX="10.0" layoutY="279.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="114.0" prefWidth="580.0" spacing="10.0" AnchorPane.bottomAnchor="7.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="279.0">
+      <StackPane layoutX="3.0" layoutY="4.0" prefHeight="268.0" prefWidth="600.0">
+         <children>
+            <ImageView fx:id="imgAudio" fitHeight="273.0" fitWidth="296.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../image/Audio.gif" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="imgVideo" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </StackPane>
+      <HBox layoutX="-4.0" layoutY="279.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="123.0" prefWidth="609.0" spacing="10.0" style="-fx-background-color: #0577a9;" AnchorPane.bottomAnchor="-2.0" AnchorPane.leftAnchor="-4.0" AnchorPane.rightAnchor="-2.0" AnchorPane.topAnchor="279.0">
          <children>
             <StackPane prefHeight="114.0" prefWidth="193.0">
                <children>
-                  <ImageView fx:id="imgVideoOn" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgVideoOn" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#imgOnMouseClicked" onMouseEntered="#imgOnMouseEntered" onMouseExited="#imgOnMouseExited" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../image/video_on.png" />
                      </image>
                   </ImageView>
-                  <ImageView fx:id="imgVideoOff" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgVideoOff" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#imgOnMouseClicked" onMouseEntered="#imgOnMouseEntered" onMouseExited="#imgOnMouseExited" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../image/video_off.png" />
                      </image>
@@ -32,12 +40,12 @@
             </StackPane>
             <StackPane prefHeight="114.0" prefWidth="150.0">
                <children>
-                  <ImageView fx:id="imgMicOn" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgMicOn" fitHeight="100.0" fitWidth="100.0" onMouseClicked="#imgOnMouseClicked" onMouseEntered="#imgOnMouseEntered" onMouseExited="#imgOnMouseExited" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../image/mic_on.png" />
                      </image>
                   </ImageView>
-                  <ImageView fx:id="imgMicOff" fitHeight="100.0" fitWidth="113.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fx:id="imgMicOff" fitHeight="100.0" fitWidth="113.0" onMouseClicked="#imgOnMouseClicked" onMouseEntered="#imgOnMouseEntered" onMouseExited="#imgOnMouseExited" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../image/mic_off.png" />
                      </image>
@@ -47,9 +55,9 @@
                   <Insets left="10.0" right="10.0" />
                </HBox.margin>
             </StackPane>
-            <ImageView fx:id="imgEndCall" fitHeight="90.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imgEndCall" fitHeight="100.0" fitWidth="102.0" onMouseClicked="#imgOnMouseClicked" onMouseEntered="#imgOnMouseEntered" onMouseExited="#imgOnMouseExited" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../image/reject.png" />
+                  <Image url="@../image/endCall.png" />
                </image>
                <HBox.margin>
                   <Insets left="40.0" right="10.0" top="10.0" />

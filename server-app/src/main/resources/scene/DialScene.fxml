@@ -4,17 +4,11 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <AnchorPane fx:id="root" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.dep13.remote.server.controller.DialSceneController">
    <children>
-      <ImageView fx:id="imgVideo" fitHeight="150.0" fitWidth="200.0" layoutX="103.0" layoutY="113.0" onMouseClicked="#imgOnMouseClicked" onMouseEntered="#imgOnMouseEntered" onMouseExited="#imgOnMouseExited" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="imgVideo" fitHeight="150.0" fitWidth="200.0" layoutX="225.0" layoutY="112.0" onMouseClicked="#imgOnMouseClicked" onMouseEntered="#imgOnMouseEntered" onMouseExited="#imgOnMouseExited" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../image/video.png" />
-         </image>
-      </ImageView>
-      <ImageView fx:id="imgDial" fitHeight="150.0" fitWidth="200.0" layoutX="323.0" layoutY="113.0" onMouseClicked="#imgOnMouseClicked" onMouseEntered="#imgOnMouseEntered" onMouseExited="#imgOnMouseExited" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../image/dial.png" />
          </image>
       </ImageView>
    </children>

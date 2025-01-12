@@ -1,14 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="lk.ijse.dep13.remote.client.controller.MainSceneController"
-            prefHeight="400.0" prefWidth="600.0">
 
+<AnchorPane fx:id="root" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="lk.ijse.dep13.remote.client.controller.ApprovalSceneController">
+   <children>
+      <HBox prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #143b4d;">
+         <children>
+            <ImageView fx:id="imgAccept" fitHeight="175.0" fitWidth="175.0" onMouseClicked="#imgOnMouseClicked" onMouseEntered="#imgOnMouseEntered" onMouseExited="#imgOnMouseExited" pickOnBounds="true">
+               <HBox.margin>
+                  <Insets bottom="100.0" left="10.0" right="10.0" top="100.0" />
+               </HBox.margin>
+               <image>
+                  <Image url="@../image/accept.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="imgVideoTransition" fitHeight="165.0" fitWidth="169.0" pickOnBounds="true" preserveRatio="true">
+               <HBox.margin>
+                  <Insets bottom="100.0" left="10.0" right="10.0" top="100.0" />
+               </HBox.margin>
+               <image>
+                  <Image url="@../image/video.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="imgReject" fitHeight="175.0" fitWidth="175.0" onMouseClicked="#imgOnMouseClicked" onMouseEntered="#imgOnMouseEntered" onMouseExited="#imgOnMouseExited" pickOnBounds="true">
+               <HBox.margin>
+                  <Insets bottom="100.0" left="10.0" right="10.0" top="100.0" />
+               </HBox.margin>
+               <image>
+                  <Image url="@../image/reject.png" />
+               </image>
+            </ImageView>
+         </children>
+      </HBox>
+   </children>
 </AnchorPane>

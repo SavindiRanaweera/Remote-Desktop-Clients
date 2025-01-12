@@ -15,9 +15,9 @@ public class AppRouter {
         if(route == Routes.DIAL) {
             container = FXMLLoader.load ( AppRouter.class.getResource ( "/scene/DialScene.fxml" ) );
         }else if(route == Routes.ACTIVE) {
-            container = FXMLLoader.load ( AppRouter.class.getResource ( "/scene/Active.fxml" ) );
+            container = FXMLLoader.load ( AppRouter.class.getResource ( "/scene/ActiveScene.fxml" ) );
         }else if(route == Routes.APPROVAL) {
-            container =  FXMLLoader.load ( AppRouter.class.getResource ( "/scene/Approval.fxml" ) );
+            container =  FXMLLoader.load ( AppRouter.class.getResource ( "/scene/ApprovalScene.fxml" ) );
         }
 
         return container;
