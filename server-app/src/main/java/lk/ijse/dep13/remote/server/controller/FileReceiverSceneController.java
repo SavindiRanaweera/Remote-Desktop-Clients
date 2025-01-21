@@ -52,10 +52,13 @@ public class FileReceiverSceneController   {
 
         }
 
+        synchronized (ServerAppInitializer.obj){
+            ServerAppInitializer.obj.notify();
+            Stage stage = (Stage) root.getScene().getWindow();
+            stage.close();
+        }
 
 
-        Stage stage = (Stage) root.getScene().getWindow();
-        stage.close();
 
 
 
