@@ -41,17 +41,30 @@ public class ActiveSceneController {
         Webcam webcam = Webcam.getDefault();
         webcam.open();
 
-        Socket videoSocket = new Socket("127.0.0.1", 9092); // Sending video to the server
-        Socket audioSocket = new Socket("127.0.0.1", 9093); // Sending audio to the server
+        Socket videoSendSocket = new Socket("127.0.0.1", 9090);
+        Socket audioSendSocket = new Socket("127.0.0.1", 9091);
 
-        new Thread(() -> sendVideo(webcam, videoSocket)).start();
-        new Thread(() -> sendAudio(audioSocket)).start();
+        ServerSocket videoReceiveSocket = new ServerSocket(9092);
+        ServerSocket audioReceiveSocket = new ServerSocket(9093);
 
-        Socket videoReceiveSocket = new Socket("127.0.0.1", 9090); // Receiving video from server
-        Socket audioReceiveSocket = new Socket("127.0.0.1", 9091); // Receiving audio from server
+        System.out.println("Client started!");
 
-        new Thread(() -> receiveVideo(videoReceiveSocket)).start();
-        new Thread(() -> receiveAudio(audioReceiveSocket)).start();
+        new Thread(() -> {
+            try {
+                receiveVideo(videoReceiveSocket);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException ( e );
+            }
+        } ).start();
+        new Thread(() -> sendVideo(webcam, videoSendSocket)).start();
+        new Thread(() -> {
+            try {
+                receiveAudio(audioReceiveSocket);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException ( e );
+            }
+        } ).start();
+        new Thread(() -> sendAudio(audioSendSocket)).start();
     }
 
     private void sendVideo(Webcam webcam, Socket socket) {
@@ -80,6 +93,21 @@ public class ActiveSceneController {
             e.printStackTrace();
         }
     }
+
+    private void receiveVideo(ServerSocket serverSocket) throws ClassNotFoundException {
+        try{
+            Socket socket = serverSocket.accept();
+            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+            while (true) {
+                byte[] imageBytes = (byte[]) ois.readObject();
+                Image image = new Image(new ByteArrayInputStream(imageBytes));
+                Platform.runLater(() -> imgVideo.setImage(image));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void sendAudio(Socket socket) {
         try {
@@ -121,6 +149,29 @@ public class ActiveSceneController {
             e.printStackTrace();
         }
     }
+
+    private void receiveAudio(ServerSocket serverSocket) throws ClassNotFoundException {
+        try {
+            Socket socket = serverSocket.accept ();
+            InputStream is = socket.getInputStream();
+            format = new AudioFormat(44100, 16, 2, true, false);
+            SourceDataLine speakers = (SourceDataLine) AudioSystem.getLine(new DataLine.Info(SourceDataLine.class, format));
+            speakers.open(format);
+            speakers.start();
+            byte[] buffer = new byte[4096];
+
+            while (true) {
+                int bytesRead = is.read(buffer);
+                if (bytesRead > 0) {
+                    speakers.write(buffer, 0, bytesRead);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void imgOnMouseClicked( MouseEvent event) throws IOException {
         ImageView imageView = (ImageView) event.getTarget();
         if (imageView == imgVideoOff) {
