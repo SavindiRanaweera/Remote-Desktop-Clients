@@ -1,6 +1,10 @@
 package lk.ijse.dep13.remote.client.controller;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -12,6 +16,8 @@ import java.net.Socket;
 public class MainSceneController {
     public ImageView imgScreen;
     public AnchorPane root;
+    public TextField txtInput;
+    public Button btnClick;
     private Socket socket;
 
     public void initialize() throws Exception {
@@ -39,9 +45,22 @@ public class MainSceneController {
                 e.printStackTrace();
             }
         } );
+        imgScreen.setOnKeyPressed(keyEvent -> {
+            try {
+//                System.out.println(keyEvent.getCode().getCode());
+                oos.writeObject(keyEvent.getText());
+                System.out.println("1 = " + keyEvent.getText());
+                System.out.println("2 = " + keyEvent.getText().getClass());
+                System.out.println();
+                oos.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
 
 // Add mouse click listener
-        imgScreen.setOnMouseClicked( mouseEvent -> {
+        imgScreen.setOnMousePressed( mouseEvent -> {
             try {
                 String button = switch ( mouseEvent.getButton() ) {
                     case PRIMARY -> "LEFT";    // Left click
@@ -73,10 +92,12 @@ public class MainSceneController {
                 }
             }
         };
-
         imgScreen.imageProperty().bind( task.valueProperty() );
         new Thread( task ).start();
     }
 
 
+    public void btnClick(ActionEvent actionEvent) {
+        Platform.runLater(() -> btnClick.setDisable(true));
+    }
 }

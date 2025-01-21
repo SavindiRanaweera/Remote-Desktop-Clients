@@ -2,65 +2,96 @@ package lk.ijse.dep13.remote.server;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SeverAppInitializer {
-    public static void main(String[] args) throws Exception {
+    private static final int PORT = 9090;
+    private static String sharedEditorContent = "";
+    public static void main(String[] args)  {
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            System.out.println("Server started. Waiting for clients...");
 
-        ServerSocket serverSocket = new ServerSocket(9090);
-        System.out.println("Server started on port 9090");
-        while (true) {
-            System.out.println("Waiting for connection...");
-            Socket localSocket = serverSocket.accept();
-            System.out.println("Accepted connection from " + localSocket.getRemoteSocketAddress());
-            new Thread(()->{
-                try {
-                    changeDesktopColor( "red" );
-                    OutputStream os = localSocket.getOutputStream();
-                    BufferedOutputStream bos = new BufferedOutputStream(os);
-                    ObjectOutputStream oos = new ObjectOutputStream(bos);
-
-                    while (true) {
-                        Robot robot = new Robot();
-                        BufferedImage screen = robot
-                                .createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        ImageIO.write(screen, "jpeg", baos);
-                        oos.writeObject(baos.toByteArray());
-                        oos.flush();
-                        Thread.sleep(1000 / 27);
-                    }
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                finally {
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client connected: " + clientSocket.getInetAddress());
+                new Thread(() -> {
                     try {
-                        revertDesktop();
+                        handleClient(clientSocket);
                     } catch (IOException e) {
                         throw new RuntimeException( e );
                     } catch (InterruptedException e) {
                         throw new RuntimeException( e );
                     }
-                }
-            }).start();
-            new Thread(()->{
-                try {
-                    InputStream is = localSocket.getInputStream();
-                    BufferedInputStream bis = new BufferedInputStream(is);
-                    ObjectInputStream ois = new ObjectInputStream(bis);
+                } ).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-                    Robot robot = new Robot();
-                    while (true){
-                        Point coordinates = (Point) ois.readObject();
-                        robot.mouseMove(coordinates.x, coordinates.y);
+    private static void handleClient(Socket clientSocket) throws IOException, InterruptedException {
+        try (Socket socket = clientSocket) {
+            changeDesktopColor( "Red" );
+            OutputStream os = socket.getOutputStream();
+            BufferedOutputStream bos = new BufferedOutputStream(os);
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+
+            InputStream is = socket.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+            ObjectInputStream ois = new ObjectInputStream(bis);
+
+            Robot robot = new Robot();
+            Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+
+            // Start a thread to capture and send the screen
+            new Thread(() -> {
+                try {
+                    while (true) {
+                        BufferedImage screenCapture = robot.createScreenCapture(screenRect);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        ImageIO.write(screenCapture, "jpg", baos);
+                        byte[] imageBytes = baos.toByteArray();
+                        oos.writeObject(imageBytes);
+                        oos.flush();
+
+                        Thread.sleep(1000/27);
                     }
-                }catch (Exception e){
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    System.out.println("Screen capture stopped: " + e.getMessage());
                 }
             }).start();
+
+            // Handle incoming messages and update editor content
+            while (true) {
+                Object received = ois.readObject();
+                if (received instanceof String) {
+                    String message = (String) received;
+
+                    if (message.startsWith("MOUSE:")) {
+                        String[] coords = message.substring(6).split(",");
+                        int x = Integer.parseInt(coords[0]);
+                        int y = Integer.parseInt(coords[1]);
+                        robot.mouseMove(x, y);
+                    } else if (message.startsWith("KEY:")) {
+                        char keyChar = message.substring(4).charAt(0);
+                        int keyCode = KeyEvent.getExtendedKeyCodeForChar(keyChar);
+                        robot.keyPress(keyCode);
+                        robot.keyRelease(keyCode);
+                    } else if (message.startsWith("EDITOR:")) {
+                        sharedEditorContent = message.substring(7);
+                        System.out.println("Updated editor content: " + sharedEditorContent);
+                        oos.writeObject("EDITOR:" + sharedEditorContent);
+                        oos.flush();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            revertDesktop();
+            System.out.println("Client disconnected: " + e.getMessage());
         }
     }
     public static void changeDesktopColor(String color) throws Exception {
