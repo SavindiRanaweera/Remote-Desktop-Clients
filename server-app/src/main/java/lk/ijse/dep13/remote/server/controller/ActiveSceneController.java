@@ -45,11 +45,15 @@ public class ActiveSceneController {
         Webcam webcam = Webcam.getDefault();
         webcam.open();
 
-        ServerSocket videoServer = new ServerSocket(9090); //  Receiving video from  client
-        ServerSocket audioServer = new ServerSocket(9091); //  Receiving audio from  client
+        ServerSocket videoServer = new ServerSocket(9090);
+        ServerSocket audioServer = new ServerSocket(9091);
 
-        Socket videoSocket = new Socket("client-ip", 9092); // Sending video to  client
-        Socket audioSocket = new Socket("client-ip", 9093); // Sending audio to  client
+        System.out.println("Server started and listening on ports 9090 and 9091...");
+//        Socket videoSocket = new Socket("192.168.205.132", 9092);
+//        Socket audioSocket = new Socket("192.168.205.132", 9093);
+        Socket videoSocket = new Socket("127.0.0.1", 9092);
+        Socket audioSocket = new Socket("127.0.0.1", 9093);
+
 
         System.out.println("Server started!");
 
