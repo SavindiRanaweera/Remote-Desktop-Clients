@@ -2,10 +2,7 @@ package lk.ijse.dep13.remote.shared.util;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class StreamHandler {
@@ -21,4 +18,19 @@ public class StreamHandler {
             e.printStackTrace ();
         }
     }
+
+    public static BufferedImage receiveVideo( Socket socket) {
+        try {
+            InputStream is = socket.getInputStream ( );
+            ObjectInputStream ois = new ObjectInputStream ( is );
+            byte[] imageByte = (byte[])ois.readObject ( );
+            ByteArrayInputStream bais = new ByteArrayInputStream ( imageByte );
+            BufferedImage image = ImageIO.read ( bais );
+            return image;
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException ( e );
+        }
+    }
+
+
 }
