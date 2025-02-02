@@ -49,10 +49,8 @@ public class ActiveSceneController {
         ServerSocket audioServer = new ServerSocket(9091);
 
         System.out.println("Server started and listening on ports 9090 and 9091...");
-//        Socket videoSocket = new Socket("192.168.205.132", 9092);
-//        Socket audioSocket = new Socket("192.168.205.132", 9093);
-        Socket videoSocket = new Socket("127.0.0.1", 9092);
-        Socket audioSocket = new Socket("127.0.0.1", 9093);
+        Socket videoSocket = new Socket("192.168.8.100", 9092);
+        Socket audioSocket = new Socket("192.168.8.100", 9093);
 
 
         System.out.println("Server started!");
@@ -64,7 +62,8 @@ public class ActiveSceneController {
     }
 
     private void sendVideo(Webcam webcam, Socket socket) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream())) {
+        try  {
+            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
             while (true) {
                 BufferedImage image = webcam.getImage();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
