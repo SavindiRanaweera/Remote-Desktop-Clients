@@ -1,6 +1,7 @@
 package lk.ijse.dep13.remote.shared.util;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -46,7 +47,21 @@ public class StreamHandler {
         } catch (IOException e) {
             e.printStackTrace ();
         }
+    }
 
+    public static void receiveAudio( Socket socket, SourceDataLine speaker) {
+        try {
+            InputStream is = socket.getInputStream ( );
+            byte[] buffer = new byte[ 4096 ];
+            while (true){
+                int bytesRead = is.read(buffer);
+                if (bytesRead > 0) {
+                    speaker.write(buffer, 0, bytesRead);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace ();
+        }
 
     }
 }
