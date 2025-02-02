@@ -1,9 +1,11 @@
 package lk.ijse.dep13.remote.shared.util;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.TargetDataLine;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
+import java.nio.Buffer;
 
 public class StreamHandler {
     public static void sendVideo( Socket socket, BufferedImage image) {
@@ -32,5 +34,19 @@ public class StreamHandler {
         }
     }
 
+    public static void sendAudio( Socket socket, TargetDataLine mic ) {
+        try {
+            byte[] buffer = new byte[ 4096 ];
+            OutputStream os = socket.getOutputStream ( );
+            while (true){
+                int bytesRead = mic.read(buffer, 0, buffer.length);
+                os.write(buffer, 0, bytesRead);
+                os.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace ();
+        }
 
+
+    }
 }
