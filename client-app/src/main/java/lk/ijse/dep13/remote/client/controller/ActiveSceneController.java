@@ -45,27 +45,15 @@ public class ActiveSceneController {
         Socket videoSendSocket = new Socket("127.0.0.1", 9090);
         Socket audioSendSocket = new Socket("127.0.0.1", 9091);
 
-        ServerSocket videoReceiveSocket = new ServerSocket(9092);
-        ServerSocket audioReceiveSocket = new ServerSocket(9093);
+//        ServerSocket videoReceiveSocket = new ServerSocket(9092);
+//        ServerSocket audioReceiveSocket = new ServerSocket(9093);
 
         System.out.println("Client started!");
 
-        new Thread(() -> {
-            try {
-                receiveVideo(videoReceiveSocket);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException ( e );
-            }
-        } ).start();
-        new Thread(() -> sendVideo(webcam, videoSendSocket)).start();
-        new Thread(() -> {
-            try {
-                receiveAudio(audioReceiveSocket);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException ( e );
-            }
-        } ).start();
-        new Thread(() -> sendAudio(audioSendSocket)).start();
+        new Thread(() -> {sendVideo ( webcam, videoSendSocket );}).start ();
+        new Thread(() -> {sendAudio ( audioSendSocket );}).start ();
+        new Thread(() -> {receiveVideo ( videoSendSocket );}).start ();
+        new Thread(() -> {receiveAudio ( audioSendSocket );}).start ();
     }
 
     private void sendVideo(Webcam webcam, Socket socket) {
@@ -95,15 +83,7 @@ public class ActiveSceneController {
             TargetDataLine microphone = (TargetDataLine) AudioSystem.getLine(new DataLine.Info(TargetDataLine.class, format));
             microphone.open(format);
             microphone.start();
-
-            OutputStream os = socket.getOutputStream();
-            byte[] buffer = new byte[4096];
-
-            while (true) {
-                int bytesRead = microphone.read(buffer, 0, buffer.length);
-                os.write(buffer, 0, bytesRead);
-                os.flush();
-            }
+            StreamHandler.sendAudio ( socket, microphone );
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -115,50 +95,18 @@ public class ActiveSceneController {
             SourceDataLine speakers = (SourceDataLine) AudioSystem.getLine(new DataLine.Info(SourceDataLine.class, format));
             speakers.open(format);
             speakers.start();
-
-            InputStream is = socket.getInputStream();
-            byte[] buffer = new byte[4096];
-
-            while (true) {
-                int bytesRead = is.read(buffer);
-                if (bytesRead > 0) {
-                    speakers.write(buffer, 0, bytesRead);
-                }
-            }
+            StreamHandler.receiveAudio ( socket, speakers );
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    private void receiveAudio(ServerSocket serverSocket) throws ClassNotFoundException {
-        try {
-            Socket socket = serverSocket.accept ();
-            InputStream is = socket.getInputStream();
-            format = new AudioFormat(44100, 16, 2, true, false);
-            SourceDataLine speakers = (SourceDataLine) AudioSystem.getLine(new DataLine.Info(SourceDataLine.class, format));
-            speakers.open(format);
-            speakers.start();
-            byte[] buffer = new byte[4096];
-
-            while (true) {
-                int bytesRead = is.read(buffer);
-                if (bytesRead > 0) {
-                    speakers.write(buffer, 0, bytesRead);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public void imgOnMouseClicked( MouseEvent event) throws IOException {
-        ImageView imageView = (ImageView) event.getTarget();
-        if (imageView == imgVideoOff) {
+        if (imgVideoOff.isVisible()) {
             imgVideoOff.setVisible(false);
             imgVideoOn.setVisible(true);
             startClient();
-        } else if (imageView == imgVideoOn) {
+        } else if (imgVideoOn.isVisible()) {
             imgVideoOn.setVisible(false);
             imgVideoOff.setVisible(true);
         }
