@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
+import lk.ijse.dep13.remote.shared.util.StreamHandler;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
@@ -68,46 +69,25 @@ public class ActiveSceneController {
     }
 
     private void sendVideo(Webcam webcam, Socket socket) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream())) {
-            while (true) {
-                BufferedImage image = webcam.getImage();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(image, "jpg", baos);
-                oos.writeObject(baos.toByteArray());
-                oos.flush();
-                Thread.sleep(1000 / 30);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        try {
+           while (true) {
+               BufferedImage image = webcam.getImage ( );
+               StreamHandler.sendVideo ( socket, image );
+               Thread.sleep ( 1000 / 27 );
+           }
+        } catch (InterruptedException e) {
+               e.printStackTrace ();
         }
     }
 
     private void receiveVideo(Socket socket) {
-        try (ObjectInputStream ois = new ObjectInputStream(socket.getInputStream())) {
-            while (true) {
-                byte[] imageBytes = (byte[]) ois.readObject();
-                Image image = new Image(new ByteArrayInputStream(imageBytes));
-                Platform.runLater(() -> imgVideo.setImage(image));
-            }
+        try  {
+            BufferedImage image = StreamHandler.receiveVideo ( socket );
+            Platform.runLater( () -> {imgVideo.setImage ( new Image ( String.valueOf ( image ) ) );});
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    private void receiveVideo(ServerSocket serverSocket) throws ClassNotFoundException {
-        try{
-            Socket socket = serverSocket.accept();
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-            while (true) {
-                byte[] imageBytes = (byte[]) ois.readObject();
-                Image image = new Image(new ByteArrayInputStream(imageBytes));
-                Platform.runLater(() -> imgVideo.setImage(image));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     private void sendAudio(Socket socket) {
         try {
