@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.Duration;
+import lk.ijse.dep13.remote.shared.util.StreamHandler;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
@@ -62,31 +63,22 @@ public class ActiveSceneController {
     }
 
     private void sendVideo(Webcam webcam, Socket socket) {
-        try  {
-            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+        try {
             while (true) {
-                BufferedImage image = webcam.getImage();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ImageIO.write(image, "jpg", baos);
-                oos.writeObject(baos.toByteArray());
-                oos.flush();
-                Thread.sleep(1000 / 30);
+                BufferedImage image = webcam.getImage ( );
+                StreamHandler.sendVideo ( socket, image );
+                Thread.sleep ( 1000 / 27 );
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace ();
         }
     }
 
     private void receiveVideo(ServerSocket serverSocket) {
         try {
             Socket socket = serverSocket.accept();
-            ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-
-            while (true) {
-                byte[] imageBytes = (byte[]) ois.readObject();
-                Image image = new Image(new ByteArrayInputStream(imageBytes));
-                Platform.runLater(() -> imgVideo.setImage(image));
-            }
+            BufferedImage image = StreamHandler.receiveVideo ( socket );
+            Platform.runLater( () -> {imgVideo.setImage ( new Image ( String.valueOf ( image ) ) );});
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -98,15 +90,7 @@ public class ActiveSceneController {
             TargetDataLine microphone = (TargetDataLine) AudioSystem.getLine(new DataLine.Info(TargetDataLine.class, format));
             microphone.open(format);
             microphone.start();
-
-            OutputStream os = socket.getOutputStream();
-            byte[] buffer = new byte[4096];
-
-            while (true) {
-                int bytesRead = microphone.read(buffer, 0, buffer.length);
-                os.write(buffer, 0, bytesRead);
-                os.flush();
-            }
+            StreamHandler.sendAudio ( socket, microphone );
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -119,27 +103,18 @@ public class ActiveSceneController {
             SourceDataLine speakers = (SourceDataLine) AudioSystem.getLine(new DataLine.Info(SourceDataLine.class, format));
             speakers.open(format);
             speakers.start();
-
-            InputStream is = socket.getInputStream();
-            byte[] buffer = new byte[4096];
-
-            while (true) {
-                int bytesRead = is.read(buffer);
-                if (bytesRead > 0) {
-                    speakers.write(buffer, 0, bytesRead);
-                }
-            }
+            StreamHandler.receiveAudio ( socket, speakers );
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     public void imgOnMouseClicked(MouseEvent event) throws IOException {
-        ImageView imageView = (ImageView) event.getTarget();
-        if (imageView == imgVideoOff) {
+        if (imgVideoOff.isVisible()) {
             imgVideoOff.setVisible(false);
             imgVideoOn.setVisible(true);
             startServer();
-        } else if (imageView == imgVideoOn) {
+        } else if (imgVideoOn.isVisible()) {
             imgVideoOn.setVisible(false);
             imgVideoOff.setVisible(true);
         }
